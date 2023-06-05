@@ -7,7 +7,13 @@ namespace Homework_number_46
     {
         static void Main(string[] args)
         {
-            Supermarket supermarket = new Supermarket();
+            Queue<Client> clients = new Queue<Client>();
+
+            clients.Enqueue(new Client(10));
+            clients.Enqueue(new Client(50));
+            clients.Enqueue(new Client(50));
+
+            Supermarket supermarket = new Supermarket(clients);
 
             supermarket.StartWork();
         }
@@ -76,10 +82,12 @@ namespace Homework_number_46
     class Supermarket
     {
         private List<Product> _products = new List<Product>();
-        private Queue<Client> _clients = new Queue<Client>();
+        private Queue<Client> _clients;
 
-        public Supermarket()
+        public Supermarket(Queue<Client> clients)
         {
+            _clients = clients;
+
             FillShop();
         }
 
@@ -173,10 +181,6 @@ namespace Homework_number_46
             _products.Add(new Product("молоко", 5));
             _products.Add(new Product("молоко", 5));
             _products.Add(new Product("молоко", 5));
-
-            _clients.Enqueue(new Client(10));
-            _clients.Enqueue(new Client(50));
-            _clients.Enqueue(new Client(50));
         }
 
         private void TryAddProduct(string userInput, Client client)
