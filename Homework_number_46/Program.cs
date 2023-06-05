@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Homework_number_46
 {
@@ -11,6 +7,9 @@ namespace Homework_number_46
     {
         static void Main(string[] args)
         {
+            Supermarket supermarket = new Supermarket();
+
+            supermarket.StartWork();
         }
     }
 
@@ -52,6 +51,10 @@ namespace Homework_number_46
             if (_products.Count > 0)
             {
                 product = _products[random.Next(_products.Count)];
+
+                _products.Remove(product);
+
+                Console.WriteLine($"К сожалению пришлось вернуть: {product.Title}");
             }
 
             return product;
@@ -73,16 +76,14 @@ namespace Homework_number_46
     class Supermarket
     {
         private List<Product> _products = new List<Product>();
-        private Queue<Client> _clients;
+        private Queue<Client> _clients = new Queue<Client>();
 
-        public Supermarket(Queue<Client> clients)
+        public Supermarket()
         {
-            clients = _clients;
-
             FillShop();
         }
 
-        private void StartWork()
+        public void StartWork()
         {
             const string CommandExit = "Exit";
             const string CommandPayPurchases = "Pay";
@@ -98,9 +99,9 @@ namespace Homework_number_46
                 {
                     ShowProductList();
 
-                    Console.Write("\nДля получения товара ведите название товара" +
-                                  $"Для оплаты покупок ведите команду: {CommandPayPurchases}" +
-                                  $"Для завершения покупок ведите команду: {CommandExit}");
+                    Console.Write("\nДля получения товара ведите название товара\n" +
+                                  $"Для оплаты покупок ведите команду: {CommandPayPurchases}\n" +
+                                  $"Для завершения покупок ведите команду: {CommandExit}\n");
                     userInput = Console.ReadLine();
 
                     switch (userInput)
@@ -117,6 +118,10 @@ namespace Homework_number_46
                             TryAddProduct(userInput, client);
                             break;
                     }
+
+                    Console.WriteLine("\nДля продолжения ведите любую клавишу...");
+                    Console.ReadKey();
+                    Console.Clear();
                 }
             }
         }
@@ -125,6 +130,8 @@ namespace Homework_number_46
         {
             while(client.AmountPurchase > client.Money)
             {
+                Console.WriteLine("К сожалению вам не хватает денег прийдётся что-то оставить в магазине!");
+
                 Product product = client.ReturnProduct();
 
                 if (product != null)
@@ -142,7 +149,7 @@ namespace Homework_number_46
 
             for (int i = 0; i < _products.Count; i++)
             {
-                Console.WriteLine($"{i}) {_products[i].Title}-{_products[i].Price}");
+                Console.WriteLine($"{_products[i].Title}-{_products[i].Price}");
             }
         }
 
@@ -167,6 +174,9 @@ namespace Homework_number_46
             _products.Add(new Product("молоко", 5));
             _products.Add(new Product("молоко", 5));
 
+            _clients.Enqueue(new Client(10));
+            _clients.Enqueue(new Client(50));
+            _clients.Enqueue(new Client(50));
         }
 
         private void TryAddProduct(string userInput, Client client)
@@ -178,6 +188,7 @@ namespace Homework_number_46
                 if (_products[i].Title == userInput)
                 {
                     product = _products[i];
+                    _products.Remove(product);
 
                     break;
                 }
@@ -186,10 +197,12 @@ namespace Homework_number_46
             if (product != null)
             {
                 client.AddProduct(product);
+
+                Console.WriteLine($"\n\nВы взяли {product.Title} его цена {product.Price}");
             }
             else
             {
-                Console.Write("К сожалению такого продукта нет в наличии!");
+                Console.WriteLine("\n\nК сожалению такого продукта нет в наличии!");
             }
         }
     }
