@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace Homework_number_46
 {
@@ -15,7 +17,7 @@ namespace Homework_number_46
 
             Supermarket supermarket = new Supermarket(clients);
 
-            supermarket.StartWork();
+            supermarket.Work();
         }
     }
 
@@ -66,6 +68,22 @@ namespace Homework_number_46
             return product;
         }
 
+        public bool TryPayPurchases(out Product product)
+        {
+            product = null;
+
+            if (AmountPurchase > Money)
+            {
+                Console.WriteLine("К сожалению не хватает денег прийдётся что-то оставить в магазине!");
+
+                product = ReturnProduct();
+
+                return false;
+            }
+
+            return true;
+        }
+
         private int GetAmountPurchases()
         {
             int amountPurchase = 0;
@@ -91,7 +109,7 @@ namespace Homework_number_46
             FillShop();
         }
 
-        public void StartWork()
+        public void Work()
         {
             const string CommandExit = "Exit";
             const string CommandPayPurchases = "Pay";
@@ -119,7 +137,7 @@ namespace Homework_number_46
                             break;
 
                         case CommandPayPurchases:
-                            isExit = TryPayPurchases(client);
+                            isExit = TryServeСustomer(client);
                             break;
 
                         default:
@@ -134,14 +152,10 @@ namespace Homework_number_46
             }
         }
 
-        private bool TryPayPurchases(Client client)
+        private bool TryServeСustomer(Client client)
         {
-            while (client.AmountPurchase > client.Money)
+            while (client.TryPayPurchases(out Product product) == false)
             {
-                Console.WriteLine("К сожалению вам не хватает денег прийдётся что-то оставить в магазине!");
-
-                Product product = client.ReturnProduct();
-
                 if (product != null)
                 {
                     _products.Add(product);
@@ -163,24 +177,17 @@ namespace Homework_number_46
 
         private void FillShop()
         {
-            _products.Add(new Product("рыба", 10));
-            _products.Add(new Product("рыба", 10));
-            _products.Add(new Product("рыба", 10));
-            _products.Add(new Product("рыба", 10));
-            _products.Add(new Product("рыба", 10));
-            _products.Add(new Product("рыба", 10));
-            _products.Add(new Product("мясо", 15));
-            _products.Add(new Product("мясо", 15));
-            _products.Add(new Product("мясо", 15));
-            _products.Add(new Product("мясо", 15));
-            _products.Add(new Product("мясо", 15));
-            _products.Add(new Product("мясо", 15));
-            _products.Add(new Product("молоко", 5));
-            _products.Add(new Product("молоко", 5));
-            _products.Add(new Product("молоко", 5));
-            _products.Add(new Product("молоко", 5));
-            _products.Add(new Product("молоко", 5));
-            _products.Add(new Product("молоко", 5));
+            CreateProducts(5, "молоко", 5);
+            CreateProducts(5, "рыба", 10);
+            CreateProducts(5, "мясо", 15);
+        }
+
+        private void CreateProducts(int quantity,string title,int price)
+        {
+            for (int i = 0; i < quantity; i++)
+            {
+                _products.Add(new Product(title, price));
+            }
         }
 
         private void TryAddProduct(string userInput, Client client)
