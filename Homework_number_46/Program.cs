@@ -128,7 +128,7 @@ namespace Homework_number_46
 
         private bool TryPayPurchases(Client client)
         {
-            while(client.AmountPurchase > client.Money)
+            while (client.AmountPurchase > client.Money)
             {
                 Console.WriteLine("К сожалению вам не хватает денег прийдётся что-то оставить в магазине!");
 
@@ -182,7 +182,7 @@ namespace Homework_number_46
         private void TryAddProduct(string userInput, Client client)
         {
             Product product = null;
-            
+
             for (int i = 0; i < _products.Count; i++)
             {
                 if (_products[i].Title == userInput)
